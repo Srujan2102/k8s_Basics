@@ -1,0 +1,33 @@
+namespace
+*********
+
+By using namespace we can do cluster (dividing)partitions and you can run containers in isolated environments
+
+
+$ kubectl get namespace---> used to check namespaces 
+
+$ kubectl get namespace | wc -l---> used to check namespaces with line count 
+
+$ kubectl get pods -n(namespace) research --> used to find number of pods 
+
+*************************************************
+create a pod in the finace namespace
+using the name: redis 
+	 image name: redis
+ 
+		syntax
+		******
+
+($ kubectl run podname --image imagename -n finance --dry-run=client -o yaml>redis.yaml)
+
+$ kubectl run redis --image redis -n finance --dry-run=client -o yaml>redis.yaml
+
+	used to create a definition file
+
+$ kubectl apply -f redis.yaml 
+
+	 
+
+************************************************
+
+$ kubectl get pods -A(for all) ---> used to check the namespace list 

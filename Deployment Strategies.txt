@@ -1,0 +1,252 @@
+Deployment Strategies --> changing from one version to another version i.e, application upgrade
+*********************
+
+How to deploy application in different Way:
+
+1.Rolling Update
+2.Recreate 
+3.Blue/Green
+4.canary 
+
+---------------------------------------------------------------------------------------
+
+1.Rolling update: --> it is the default deployment strategy in k8s
+
+Upgrading from current version to new version changing the tags of dockerimage
+eg: myimg:v1---> current version
+    myimg:v2 --> upgraded
+
+
+* In rolling update it shows both 
+	Maxsurge  --> The percentage of pods that are upgraded from current version to new version 
+		The number of pods that gets upgraded is --> 25%
+
+	Maxunavailable ---> The percentage of pods that are not available during the upgrade from current version 		The number of pods that won't be available during upgrade is --> 25%
+
+Ex: New pods are created one at a time (Banking application)
+
+* Replace Old pods with new ones
+
+* Ensure Zero downtime by maintaining availability through the update 
+
+kubectl exec -it pod name -- /bin/bash --> to enter in to that
+
+kubectl describe deployment name
+
+kubectl describe pod podname --> can also be used to see the java version
+
+-----------------------------------------
+
+2. Recreate:---> Entire pods are deleted and recreated with then new pods 
+
+* Shuts down all old pods before creating new pods
+
+* Ensure clean environment for new version 
+
+Ex: Downtime during the switch (rapido ola uber zomato) it is not suitable for high-availability apps
+
+--->In this try to change the jdk17 to jdk11 and also change the strategy to Recreate
+
+-----------------------------------------
+
+Blue/Green Deployment:
+
+Manually will deploy
+ 
+Deploy new version in parallel(green)
+while old version(blue) remains live Then switch traffic from blue to green 
+
+Ex: instant switch (via service update)
+Easy to rollback (revert service back to blue)
+
+Double resource usage 
+Manual routing switch needed (ex: application colour letter head images symbols)
+
+
+
+
+kubectl create namespace blue --> creates namespace for blue
+
+kubectl create namespace green --> creates namespace for green
+
+kubectl get ns ---> used to see the namespaces
+
+kubectl config set-context --current --namespace=blue ---> used to change the namespace  
+
+kubectl config get-contexts --> used to see the current namespace
+
+--> kubectl create deployment jenkins-jdk11 --image Jenkins/Jenkins:jdk11 --replicas=2 --dry-run=client -o yaml>bluedep-v1.yaml
+
+--> kubectl apply -f bluedep-v1.yaml
+
+--> kubectl get pods --> shows 2 pods 
+
+--> kubectl get pods -n blue --> used to see the namespace in blue
+
+--> kubectl exec -it podname -- /bin/bash --> enters in to the pod 
+	java --version --> shows the version of jdk11
+
+--> kubectl config set-context --current --namespace=green
+
+--> kubectl create deployment jenkins-jdk17 --image Jenkins/Jenkins:jdk17 --replicas=2 --dry-run=client -o yaml>greendep-v2.yaml
+ 
+--> kubectl apply -f greendep-v2.yaml
+
+--> kubectl get pods --> shows 2 pods
+
+--> kubectl exec -it podname -- /bin/bash --> enters in to the pod 
+	java --version --> shows the version of jdk17
+
+**** we need to write service file for both the yaml files ***
+
+--> vi blue-service.yaml 
+	in this focus on label with 
+	app:jenkins-jdk11
+
+--> kubectl apply -f blue-service.yaml
+
+--> kubectl get svc --> shows the service of loadbalancer
+
+	for this we have to write ingress
+
+--> vi green-service.yaml 
+	in this focus on label with 
+	app:jenkins-jdk17
+
+--> kubectl apply -f green-service.yaml
+
+
+
+assume blue service as v1 --> www.example.com
+
+green service as v2 --> www.test.com
+	after opening the link if its ok then in blue namespace create deployment and change the selector in blue namespace as v2(app: jenkins-jdk11 to app: jenkins-jdk17)
+
+by changing the labels we are routing the traffic to jdk17 like www.example.com that routes to www.test.com
+
+ ---------------------------------------
+
+4.canary:---> It uses only one service file
+
+Required manual setup
+
+Gradually shift small percentage of traffic to the new version observe and proceed rollback 
+
+Ex: ( 10% of traffic send succesffully will send remaining at a time )
+
+--> A small traffic is routed to new version
+
+eg: if it has 10 pods
+	current version v1 --> 9pods
+   	upgraded version v2 --> 1pod 
+	after doing testing in v2 then they are going to change 1 pod to 10 pods and deletes the 9 pods in v1
+
+Here we use only one service file for both
+like mentioning 
+	app: jenkins-jdk11
+	app: jenkins-jdk17
+in a single service file 
+
+
+
+
+---------------------------------------------------------------------------------------------------
+
+Steps to creating Rolling update --> it is the default deployment strategy
+********************************
+
+1. I am  creating deployment with replicaset count one 
+	kubectl create deployment jenkins --image Jenkins/Jenkins:jdk11 --replicas=1 --dry-run=client -o yaml>deploy.yaml
+
+2. you need to check the deployment is created or not 7
+	kubectl get deploy
+
+3. you need to check the pods is created or not 
+	kubectl get pods
+
+4. kubectl edit deploy Jenkins 
+
+5. kubectl apply -f Jenkins 
+
+6. kubectl get pods
+
+7. kubectl exec -it podname -- /bin/bash 
+
+8. java --version --> shows jdk11
+
+9. exit
+
+10. kubectl edit deploy Jenkins --> update the jdk11 to jdk17 
+
+	At a time two temporary pods will be creating  in that time other 4 pods are running -> application will run on 4 pods 
+	two temporary pods will successfully created --> in that 2 pods out of 4 pods will terminate --> temporary 2 pods + already running 2 pods= total 4 pods application will be running in total of 4 pods
+
+
+---------------------------------------------------------
+
+Steps for Recreate 
+******************
+
+11. kubectl delete deploy Jenkins
+
+12. kubectl apply -f deploy.yaml 
+
+13. kubectl get pods 
+
+14. kubectl exec -it podname -- /bin/bash 
+
+15. java --version --> shows jdk11
+
+16. kubectl edit deploy Jenkins 
+
+	change the strategy to recreate  and also change the jdk11 to jdk17
+
+17. kubectl get pods
+
+	here it terminates all old pods and creates new pods
+
+18. kubectl exec -it podname -- /bin/bash 
+
+---------------------------------------------------------------------------
+
+create a namespace  of blue
+create deployment-blue.yaml think it as v1 in blue namespace --> app: nginx
+
+create a namespace  of green
+create deployment-green.yaml think it as v2 in green namespace --> app: nginx1
+
+service.yaml in blue namespace --> app: nginx run with v1 
+service.yaml in green namespace --> app: nginx1 run with v2
+
+copy the code from anji103 from sonarqubejenkins repository 
+
+
+		(or) 
+
+
+create a dockerfile 
+*******************
+
+FROM ubuntu 
+COPY index.html /usr/share/nginx/html 
+
+vi index.html --> this is blue deployment  v1
+
+docker build -t sujan . 
+docker tag sujan srujan2102/repo:latest 
+docker push srujan2102/repo:latest 
+
+FROM ubuntu
+COPY index.html /usr/share/nginx/html 
+
+vi index.html --> this is green deployment v2
+
+docker build -t sujan1 .
+docker tag sujan1 srujan2102/repo:latest 
+docker push srujan2102/repo:latest 
+
+srujan2102/repo:latest  -> deploy with blue namespace with v1  
+srujan2102/repo:latest  -> deploy with green namespace with v2 
+
+service.yaml  --> label app: nginx for blue  --> shows v1 
+service.yaml  --> label app: nginx1 for green  --> shows v2 

@@ -1,0 +1,210 @@
+Kubernetes Architecture  ----> Kubernetes commands run in kubectl
+***********************
+
+______________________________________________________________________________________________
+
+Kubernetes is orchestration tool platform designed to automate the deployment ,scaling and management of containerized application
+
+_________________________________________________________________________________________________
+
+Deploying the application in the Kubernetes
+our application is packaged in dockerimage
+This docker image is pushed to dockerhub
+This image is used in Kubernetes
+
+1. Auto scaling
+2. Loadbalancing
+3. self healing automated management using controllers in controlmanager
+4. security 
+
+
+* It is orchestration tool
+
+	Orchestration in Kubernetes refers to the automated management(control managers) and coordination of containerized applications(POD) across clusters(group of servers or nodes or virtual machine or virtual server) of machines.
+	
+	 Kubernetes (often abbreviated as K8s) is an open-source container orchestration platform that automates the deployment, scaling, health monitoring and operations of application containers.
+
+* docker images are used by the Kubernetes
+
+* it will run the application inside the POD 
+
+-----------------------------------------------
+K8s Architecture
+****************
+Clusters 
+********
+
+It is a group of nodes 
+
+1. master node 
+	(scheduler , ETCD , Control manager, apiserver)
+
+2. worker nodes (lot of workernodes will be there)
+	kubelet, kubeproxy, pods ,container run time
+
+-------------------------------------------
+
+Scheduler
+*********
+
+kube scheduler identify the best workernode for its available requirement and pick he best cpu and memory.
+
+Each workernode(every workernode will have kubelet) will be having different capacity(cpu and memory) 
+
+eg: 3 smaller ships 
+
+	1st ship handles ---> 100 tones
+	2nd ship handles ---> 150 tones
+	3rd ship handles ---> 200 tones
+
+If we are having 170 tones --> scheduler interacts with the apiserver interact with the kubelet and respond to that and again inform to the apiserver and inform to the scheduler
+
+---------------------------------------------
+ETCD
+****
+
+* It acts like a database (no sql database ) used to store the names,objects,metadata(workernode names)
+
+* it store the date in key value pair format
+
+* if we run --> kubectl get pods interact with the apiserver and interact with  ETCD it displays the pods names
+ 
+--------------------------------------------
+Apiserver ---> it requests and gives response
+*********
+
+* Acts as a entrypoin for all k8s operations
+
+* apiserver acts as a medium between masternode and workernode 
+		(or)
+	
+ * establishes the communication b/w the masternode components and it is the only component which  interacts with the kublet of workernode
+
+---------------------------------------------
+
+control manager
+***************
+
+* Ensure the cluster remains in its desired state(how many pods are running in kubectl) manage the controllers
+
+1. Node Controller: ---> Monitor the health of workdr nodes 
+
+	* node controller is one of the controller in control manager 
+
+	* node controller interacts with the apiserver and monitors the kubelets of workernode everytime
+
+pods run inside the workernode
+
+eg: 3 workernodes --> 6pods are running 
+
+	1st workernode --> 2 pods   
+  	2nd workernode --> 2 pods
+	3rd workernode --> 2 pods --> if a problem is arised that means not reachable it shares to other workernodes 
+
+Node controller informs workernode is not working gets the information from the apiserver 
+
+control manager is always in touch with apiserver it will be in touch with kubelet and update the changes to the node controller by distributing the node to other and after it get back to normal
+
+
+2. Replication Controller: ---> Maintain the correct number of running pods
+
+3. Service Controller: ----> Manages the networking configuration
+
+---------------------------------------------
+
+Worker Nodes
+************
+
+1. kubelet -----> Communicates with the Apiserver to execute pod specifications. It ensure containers inside pods are running properly. Restores failed containers automatically.
+   *******
+
+kubelet works as an agent
+
+it stores all the related data in the kublet
+
+---------------------------------------------
+kubeproxy
+*********
+
+* Handles network for pods
+
+* Route the traffic b/w services , implementing loadbalancing
+
+* Establish communication b/w pods and kublet we use kubeproxy it informs what is going on  just like apiserver 
+
+--------------------------------------------
+
+pod ---> Smallest Deployment unit Containing one or more containers
+***
+
+Pod ---> inside the pod we will have container inside the container we will have application
+
+application runs in the container and the containers run inside the pod 
+
+---------------------------------------------------------------
+
+we can create objects(pods) in 2 ways
+1. directly using command
+	
+	kubectl run nginx --image ngnix ---> inside this pod ngnix service will run 
+	
+2. using manifest file/pod manifest file/pod definition file
+
+	Every manifest file consists of 
+		1.apiversion ----> it uses v1 
+		2.kind --> used to distinguish the objects
+		3.metadata --> same information stored as ETCD
+		4.specification
+
+	manifest files are written in yaml format --> it is not going to create the nginx pod ---> for this we have to apply the changes
+
+	kubectl run ngnix --image nginx --dry-run=client -o yaml >ngnix.yaml
+----------------------------------------------------------------------
+
+Container Runtime Engine (CRE) ----> Runs Containers based on kubernetes definitions 
+
+eg: Docker , containered
+
+
+------------------------------------------------------------------------------------
+
+Main thing to learn in kubernets 
+********************************
+
+1. Deployment
+2. Service
+3. Ingress
+4. HPA and VPA
+5. PVC and PV
+
+
+
+------------------------------------------------------------------------------
+
+
+
+Kubernetes Orchestration 
+************************
+
+Auto Scaling:
+
+1. HPA (Horizontal Pod Autoscaling) ----> Increase the number of CPU's
+
+2. VPA (Vertical Pod Autoscaling) -----> Increase the storage of existing CPU
+
+
+
+-----------------------------------------------------------------
+
+* we can store images in dockerhub or ECR 
+
+* what ever manifest file we write --> desired state file 
+
+* what ever it is running in k8s cluster it is live state file
+
+* Even though we create the manifest file --> it automatically add few more things in the manifest file --> kubectl edit
+	|
+	|
+for doing some changes 
+1. desired state file --> applying it again
+2. live state file --> directly we can do editing

@@ -1,0 +1,77 @@
+GitOps with ARGOCD
+******************
+
+--> GitOps --> It is a pure automation
+
+--> ARGOCD --> Deploy in k8s cluster
+
+--> sync policy 
+	1. manual 
+	2. automatic
+
+eg: in our git hub we take replicas as 5 argocd will pull the deployment file and take 5 replicas again you changed to 6 replicas
+
+desired state ---> replicas:6
+live state --> replicas:5 (earlier)
+	automatically it sink the replicas as 6 not only that all the changes as well
+
+--> Desired state -->  what is our plan
+
+--> Live state --> what actual is happening
+
+-----------------------------------------------
+create an instance of kops 
+
+1. sudo -i 
+
+2. paste the cluster creation
+
+3. update it using the cluster
+
+4. using the validate command it checks whether the cluster is created or not
+
+5. create an instance of master node for installing argocd
+
+6. git clone k8s 
+
+7. cd k8s 
+
+8. sh argocd.sh --> installs the argocd
+
+9. kubectl get pods -n argocd
+
+10. kubectl get svc -n argocd 
+	copy the external ip and mention the port number in inbound rules
+
+11. run the initial password from the k8s
+
+12. in argo application
+    click on newapp
+	app name --> myapp-v1
+	project name --> default
+	sync policy --> automatic
+	repository url --> clone k8s 
+	revision --> main
+	path --> gitops-argocd/ (mention from the k8s) 
+	cluster url --> default it shows
+	namespace --> default
+    click on edit yaml and save it and create it
+	click on myapp-service  and copy the hostnames and paste in another tab ther it shows the v1 version
+
+14. again if you made any changes in GitHub by changing the v1 to v2 in the image 
+
+15. refresh the page and refresh the apps
+	now refresh the tab then it will change to v2 version
+
+13. create an instance in that install docker 
+	docker run --name myappv1 -d -p 81:80 srujan2102/k8s:v1
+	docker run --name myappv2 -d -p 82:80 srujan2102/k8s:v2
+	docker ps
+	    copy the ip address and paste in another tab and mention :81
+	    same with :82
+------------------------------------------------
+
+duties of devops engineer
+************************
+
+Devops duty is to deploy the application in the server using the cicd tools like Jenkins, bamboocity, travisci , gitops ,gitlabcicd

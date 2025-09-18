@@ -1,0 +1,119 @@
+Manual Scheduling
+*****************
+
+1. Node selector
+
+* what ever the node we have given it will deploy on particular node
+
+* we should know the name of the worker node 
+
+* A node selector is the simplest way to tell Kubernetes which nodes a pod should run on.
+
+By default, Kubernetes schedules pods on any available node. But sometimes you want a pod to run only on certain nodes (for example, nodes with GPUs, SSDs, or dedicated for production).
+-------------------------------------
+
+2.Taints and Tolerations
+*********************** 
+
+* Taint is applied on nodes
+
+* Tolerations is given in the pod definition file
+
+kubectl taint node nodename key=value:Effect 
+
+effect has 3 types
+
+1. Noschedule
+2. PreferNoSchedule
+3. NoExecute
+
+
+1.NoSchedule
+************
+
+When the condition exactly satisfies then only the pod is deployed on the worker node
+
+when the taint applied on the worker node if it is satisfied by the toleration given in the pod definition file then only the pod is scheduled or deployed on the worker node
+
+eg: if in taint has app=myapp:NoSchedule then the toleration should be same as taint then only it will deploy on that  like
+	toleration:
+	   key : "app"
+	   operator : "Equal"
+ 	   value : "myapp" 
+	    Effect : "NoSchedule"
+
+It is not going to affect the already existing pods on the workernode 
+
+It is going to work on newly created pods
+
+
+kubectl taint node nodename app=myapp:NoSchedule --> used to taint a node
+
+kubectl taint node nodename app=myapp:NoSchedule-   ---> used to delete the applied taint node
+
+kubectl describe node nodename --> used to see indetail
+
+kubectl describe node i-0140f67fe55726(nodename) | grep "Taints" --> used to see the specific taint
+
+
+eg: if iam having 4 workernodes --> taint is on only one node i.e, app=myapp1:NoSchedule applies on only one node the remaining has not tainted
+
+create a pod definition file in that add toleration for particular node but it also applies for other also
+
+
+--------------------------------------------
+2.PreferNoScheduler
+*******************
+
+taint on node may or may not satisfied by the toleration in the pod
+
+
+
+
+
+
+--------------------------------------------
+
+3.NoExecute
+***********
+
+* It is going to affect the already existing pods on the workernode 
+
+* when the taint is applied it excludes(abict) the already existed nodes
+
+* If i mention toleration the pod will not abict 
+
+kubectl taint node nodename node=node1:NoExecute ---> removes the taint for running pods
+
+
+
+--------------------------------------------
+
+4. Requests and limits
+**********************
+
+By mentioning the requests and limits it enables the system to select how many cpu's does it want and allocate to it
+
+when the required resources are not properly allocated to the pod it gets ---->crashloopbackoff
+
+
+
+
+
+----------------------------------------------------------------------
+
+affinity --> set of rules that should satisfy
+
+Nodeaffinity --> It is used to check the label , It is similar to node selector
+************
+
+kubectl label node nodename disktype=ssd 
+kubectl describe node nodename
+
+1. RequiredDuringSchedulingRequiredDuringExecution ----> pod should definitely satisfy the condition
+2. RequiredDuringSchedulingIgnoredDuringExecution ---> pod should definitely 
+3. PreferredDuringSchedulingIgnoredDuringExecution ---> may or maynot
+
+
+
+

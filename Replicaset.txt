@@ -1,0 +1,80 @@
+Replicaset -----> same or duplicate
+**********
+
+To distribute the load among the pods to avoid the crashing we use replicaset
+
+If the application is running only in one pod then that single pod cannot handle all the traffic load users 
+ so we run the same application in different pods which you call as replicaset
+
+
+
+eg: I have 3 pods like Jenkins, SonarQube,Ansible 
+
+for jenkins i have to create 5 pods/replicas ---> for this keep some label to identify 
+while running in replicaset  
+
+	selector :myjenkins(label)
+		matchlabels:
+		   name :myjenkins
+	 replicas: 5  
+This will run in 5 pods by identifying the label
+
+Replication controller manages the pods in a desired way
+
+
+-----------------------------------------------------------------------
+Replicaset definition
+*********************
+
+apiserver/apiversion :apps/v1
+kind : Replicaset
+metadata: ---> all this information stored in ETCD 
+	name:myap-repelica
+	labels:
+		app: myapp
+		type: front-end
+spec:
+    replicas : 3
+    selector:
+    matchlabels:
+	typefornt-end
+
+    template:
+	here pod definition data will be present excluding apiversion and kind 
+    
+---------------------------------------------------------------------------------------
+
+Replicaset commands
+*******************
+*******************
+
+$ kubectl get rs /kubectl get replicaset---> used to check the replicaset list
+
+$ kubectl describe rs new-replica-set ---> used to check the images
+
+
+$ kubectl delete pod new-replica-set-8722j(podname)
+
+	replicas -4 
+If I delete any one pod it automatically a new pod is recreated because of replication controller that ensures that desired number of pods always run in replicaset 
+
+
+$ ls ---> it shows the list of replicas in the replicaset concept 
+
+$ vi replicaset-definition-1.yaml ---> opens the editor and shows all the data of apiversion,kind,metadata, spec
+	If there is any error we have to correct it in the apiversion with app/v1 
+
+ 
+$ kubectl apply -f replicaset-definition-1.yaml --> applies the changes
+
+$ kubectel get rs --> shows how many  replicasets exist
+
+$ kubectl get pods --> shows all pods and and repicas with 2 it shows same pods with different pod id 
+
+$ kubectl delete rs replicaset-1 replicaset-2 -----> deletes the replicasets
+
+
+$ kubectl edit rs new-replica-set --> used to edit the changes
+
+$ kubectl scale rs/new-replica-set --replicas=5 ---> used to scale from 4 replicas to 5 replicas or we can use edit also 
+

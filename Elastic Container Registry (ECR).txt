@@ -1,0 +1,48 @@
+Elastic Container Registry (ECR)
+*******************************
+
+
+AWS CLI Setup
+*************
+
+1. sudo apt update -y
+
+2. curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+
+3. sudo apt install unzip
+
+4. unzip awscliv2.zip
+
+5. sudo ./aws/install
+
+	it shows --> You can now run: /usr/local/bin/aws --version
+
+6. aws --version 
+
+	used to show version --> aws-cli/2.28.1 Python/3.13.4 Linux/6.8.0-1029-aws exe/x86_64.ubuntu.24
+
+7. aws configure
+	AWS Access Key ID [None]:
+	AWS Secret Access Key [None]:
+	Default region name [None]: ap-southeast-1a
+	Default output format [None]: json
+ 
+create a ECR repository
+
+------------------------------------------------
+
+8. git clone https://github.com/Srujan2102/Installations.git
+
+9. cd Installations
+
+10. sh docker.sh
+
+11. aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin 753471899936.dkr.ecr.ap-southeast-1.amazonaws.com
+
+12. docker pull srujan2102/vprofile:9
+
+13. docker tag srujan2102/vprofile:9 753471899936.dkr.ecr.ap-southeast-1.amazonaws.com/sample-push:9
+
+14. docker images --> shows the images
+
+15. docker push 753471899936.dkr.ecr.ap-southeast-1.amazonaws.com/sample-push:9

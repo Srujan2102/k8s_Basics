@@ -1,0 +1,124 @@
+Services 
+********
+
+
+
+1.LoadBalancer --> External
+2.NodePort --> External
+3.Cluster Ip  -->Internal network --> It uses database(when some needs to store data they store in backend services ) --> private
+
+pods can be of 2 types 
+
+1. frontend pods (loadbalancer and nodepod ) To see the frotend page use the loadbalancer or nodepod 
+
+eg:html ,css 
+ 
+2. backend pods
+	
+------------------------------------------
+
+
+1. Nodeport ---> To access a single pod it uses nodeport
+  
+	1. Port
+	2. Targetport
+	3. Type
+
+
+
+---------------------------------------------
+
+
+2. Loadbalancer --> when we are using multiple replicas we use loadbalancer 
+
+eg: suppose i have 10 pods in each pods some service is running(sonarqube) -> for this we use single endpoint
+
+	we have to write a service for pods pod1 --> label(app:myapp1) --matchlabels -->
+
+
+
+-----------------------------------------------
+
+3. clusterip -->   
+
+
+
+
+
+
+-------------------------------------------
+
+
+
+In Kubernetes, Services provide a stable network endpoint to access a group of pods. Since pods are ephemeral (they come and go), Services ensure consistent access to your app components like frontend, backend, or database.
+
+🔧 Types of Kubernetes Services
+
+Service Type	Description
+
+ClusterIP	Default. Accessible only within the cluster. Used for internal communication between pods (e.g., frontend → backend).
+
+NodePort	Exposes the service on a static port on each Node’s IP. Used for basic external access.
+
+LoadBalancer	Integrates with cloud provider's external load balancer. Used for public-facing apps.
+
+ExternalName	Maps the service to a DNS name outside the cluster.
+Headless Service	No Cluster IP; used for direct pod discovery (e.g., StatefulSets, databases).
+
+📦 Use Case: Frontend and Backend Pods
+Let’s say you have:
+
+Frontend Pods running a React or Angular app
+
+Backend Pods running a Node.js/Java/Python API
+
+✅ 1. Backend Service (ClusterIP)
+You expose backend pods with a ClusterIP so only internal traffic (like frontend) can reach it:
+
+yaml
+Copy
+Edit
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  selector:
+    app: backend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: ClusterIP
+Pods with label app: backend will be targeted
+
+Frontend can access it via http://backend-service:80
+
+✅ 2. Frontend Service (LoadBalancer or NodePort)
+Frontend needs to be accessed by end users, so you expose it via LoadBalancer (in cloud) or NodePort (on-premise):
+
+yaml
+Copy
+Edit
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  selector:
+    app: frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: LoadBalancer
+If you're on AWS, GCP, Azure → this will provision a cloud load balancer
+
+Users can open the app via http://<external-ip>:80
+
+🔁 Communication Flow
+bash
+Copy
+Edit
+User's Browser --> LoadBalancer --> Frontend Pods
+Frontend Pods   --> ClusterIP     --> Backend Pods

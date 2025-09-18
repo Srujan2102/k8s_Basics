@@ -1,0 +1,50 @@
+Role and Rolebinding
+********************
+
+Role --> Series of actions that perform on particular objects or resources like list and update
+
+eg: if there are 10 devops users who are working in different namespaces like (Dev, UAT,SAT, PROD, PREPOD) 
+
+1 user is admin and other 9 are normal users 
+
+if one user deletes a deployment it stops the traffic for this purpose we need to implement RBAC(Role Based Access Control)
+
+Role and Rolebindings is of 2 types
+***********************************
+1. Namespace level
+2. Cluster level
+
+--> roles and rolebindings at namespace level
+1. role
+2. rolebinding
+
+--> roles and rolebindings at cluster level 
+1. clusterrole
+2. clusterrolebinding
+
+ In this roles we need to mention the resources like Pod, deployment or statefulset 
+
+role--> It is nothing but giving actions to perform (list,update) 
+
+role binding -->  roles are attach to the user using role binding
+
+
+
+
+RBAC --> Rolling back access authentication controller 
+eg:by mistake user delete some resources what to do for that purpose we use 
+1. Role/cluster role
+2. Role binding/ cluster binding 
+
+Role --> single namespace
+****
+api groups
+
+resources (pod , deploy, service)
+
+verbs nothing but actions ( read , write)
+
+cluster role --> more than one name space 
+************
+
+

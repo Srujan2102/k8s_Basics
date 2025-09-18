@@ -1,0 +1,83 @@
+Kubernetes commands 
+*******************
+
+* The pods will run only in the workernode or server--> controlled by the masternode
+
+* Imagepullbackoff ---> This means the image is not found in the dockerhub or registry 
+
+
+
+$ kubectl get pods / kubectl get po ----> used to display the pods /used to list out the pods
+
+$ kubectl get pod webapp ---> used to check particular pod
+
+
+
+$ kubectl run nginx --image ngnix ---->used to create a image
+
+$ kubectl delete pod ngnix ---> used to delete the image/pod
+
+
+
+$ kubectl run (name of the pod) ngnix --image (image name) nginx --dry-run=client -o(output) yaml >ngnix.yaml ---> manifest file
+ 
+$ kubectl apply -f ngnix.yaml ---> applies the changes and creates the pod
+
+$ cat ngnix.yaml ----> used to check the file
+
+
+$ kubectl describe pod (podname) nginix ---> used to find about that pod/ to find out the image used
+
+$ kubectl describe pod webapp ---> used check status whether it is error or waiting and also in events /if we are not having the pod definition we use this
+
+$ kubectl describe pod webapp | grep image --> used to see the accurate image
+
+$ kubectl get pods -o wide ----> where the nodes are running --> controlplane or masternode
+
+$ vi redis.yaml ---> used to change the changes
+
+$ kubectl get pod | wc -l ---> used to see the multiple lines
+----------------------------------------------------------------------------
+
+Replicaset commands
+*******************
+*******************
+
+$ kubectl get rs /kubectl get replicaset---> used to check the replicaset list
+
+$ kubectl describe rs new-replica-set ---> used to check the images
+
+
+$ kubectl delete pod new-replica-set-8722j(podname)
+
+	replicas -4 
+If I delete any one pod it automatically a new pod is recreated because of replication controller that ensures that desired number of pods always run in replicaset 
+
+
+$ ls ---> it shows the list of replicas in the replicaset concept 
+
+$ vi replicaset-definition-1.yaml ---> opens the editor and shows all the data of apiversion,kind,metadata, spec
+	If there is any error we have to correct it in the apiversion with app/v1 
+
+ 
+$ kubectl apply -f replicaset-definition-1.yaml --> applies the changes
+
+$ kubectel get rs --> shows the new replicaset
+
+$ kubectl get pods --> shows all pods and and repicas with 2 it shows same pods with different pod id 
+
+$ kubectl delete rs replicaset-1 replicaset-2 -----> deletes the replicasets
+
+
+$ kubectl edit rs new-replica-set --> used to edit the changes
+
+$ kubectl scale rs/new-replica-set --replica=5 ---> used to scale from 4 replicas to 5 replicas or we can use edit also 
+
+
+
+-----------------------------------------------------
+Errors
+******
+
+1. Imagepullbackoff ---> this we will get when the image is not available in the dockerhub 
+

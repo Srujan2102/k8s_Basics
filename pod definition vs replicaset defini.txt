@@ -1,0 +1,64 @@
+pod definition vs replicaset definition
+***************************************
+
+
+*******************
+pod definition file
+*******************
+
+apiversionn :v1 (this is used to differentiate the objects)
+kind: pod
+metadata: -->(what ever we mention in the metadata it is stored in the ETCD. eg: like keypair: value)
+   name:jenkispod
+   labels:
+	app:myapp1
+spec:
+   containers:
+	-name: jenkinspod
+	image: Jenkins/Jenkins:jdk17
+
+* kubectl api-resources | grep pod ---> used to check the apiversion
+------------------------------------------------------
+
+
+**************************
+Replicaset definition file
+**************************
+
+apiversion :apps/v1
+kind: Replicaset
+metadata:
+   name:myreplica
+  labels:
+      app:myapp1
+ 
+spec:
+ template:
+    metadata:
+     name:jenkispod
+     labels:
+	app:myapp1
+spec:
+   containers:
+	-name: jenkinspod
+	image: Jenkins/Jenkins:jdk17
+
+selector:
+   matchlabels:
+      app:myapp1
+
+replicas:5 ----> in this Jenkins application will run for 5 times
+
+
+----------------------------------------------------
+
+* You can create only single pod if you are using poddefinition file 
+
+	It can handle only one single pod i.e, only one application
+
+* By using Replicaset you can use same application that can run in multiple different pods in replicaset
+
+________________________________________________________________
+
+
+

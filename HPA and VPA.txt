@@ -1,0 +1,71 @@
+HPA and VPA
+***********
+
+we can do the manual and automated scaling of pods 
+
+1. manual scaling we can do by changing the no. of replicas
+	kubectl scale rs/replicaset-name --replicas = 2
+
+2. Automated scaling of pods by HPA and VPA
+
+HPA--> Horizontal Pod Autoscaling
+*********************************
+
+By default k8s is HPA
+
+--> Increasing or scale up the pods called as HPA
+
+eg: In a single pod we are using an app with usage of 50% that has 100%
+   if it reaches 50% we scale up the pods by HPA , we can also use multiple pods
+
+--> create a Jenkins application and note down the cpu and check the cpu and memory usage of Jenkins by running the command 
+
+	kubectl top pods --> for this install metrics server
+
+eg: we are having 1000mm cpu and replica 1 as min replica 3 as max in that it requests 500mm  if the pod cpu utilization crosses the 50% of cpu allocated to the Jenkins pod  then scale up the pods to 3 replicas
+
+
+
+
+Load balancing --> Distributing the load among the existing servers(Elastic load balancer in AWS)
+
+in k8s among the pods uses replication controllers
+
+Autoscaling --> based on the cpu utilization or based on the requests 
+
+scale up or scale down the servers(desired min and max number of servers)
+
+In k8s scale up or scale down the pods in diff servers
+
+-------------------------------------
+
+Vertical Pod AutoScaling
+************************
+--> Increasing the capacity of the server(RAM and storage) 
+
+--> Increasing Resources of the pods(cpu and memory) 
+
+--> when users or requests are increasing we have to increase the pods or strength of the pods
+
+--> If it gets deleted the pod for not handling thus creates the new pod with higher cpu and memory thus we get the downtime thats why we use mostly HPA
+
+--> The more the cpu's and memory the more the users can handle 
+ 
+--> VPA is installed through autoscaler
+
+--> we need metric server for both HPA and VPA
+
+Life cycle of pod
+*****************
+
+1. pending 
+2. container creating
+3. Running
+
+
+when installing k8s cluster HPA will be installed default
+
+If you want to delete the existing we have to follow the order 
+	1. HPA
+	2. Service
+	3. Deployment

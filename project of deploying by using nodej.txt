@@ -1,0 +1,81 @@
+project of deploying by using nodejs
+************************************
+
+1. create an instance of t2 large and select the subnet of default in network and launch the instance 
+
+2. git clone  k8s-ingress 
+
+3. cd k8s-ingress
+
+4. docker build -t myapp:v1 .
+
+5. docker images
+
+6. docker run --name mynodeapp -d -p 3000:3000 myapp:v1 
+
+	copy the ip address and paste it in the tab and mention /3000
+
+7. docker login -u srujan2102
+
+8. docker tag myapp:v1 srujan2102/repo:v1 
+
+9. docker push srujan2102/repo:v1
+
+10. kubectl create deployment mynodejsapp --image srujan2102/repo:v1 --replicas=2 --dry-run=client -o yaml>dep.yaml 
+
+11. cat dep.yaml 
+
+12. kubectl apply -f dep.yaml 
+
+13. kubectl get deploy ---> here we will see our application
+
+14. cd myapp 
+
+15. vi svc ---> shows svc.yaml , svc2.yaml
+
+    vi svc.yaml 
+	in this name : mynode-service
+	app:mynodejsapp
+	target port --> 3000
+	
+16. kubectl apply -f svc.yaml
+
+17. kubectl get svc  ---> shows the no.of services in this port copy the port number and allow this
+	
+	In this copy the loadbalancer id and paste in separate tab , we use this as a platform just like googl.com
+
+18. kubectl get pods -o wide 
+
+19. kubectl describe svc
+
+20. cd .. 
+
+21. cat dep.yaml 
+
+22. kubectl edit svc mynode-service
+	change the app name -->  mynodejsapp
+
+23. godaddy --> here we will buy the domain to run the service
+
+	
+add the record as --> cName  and name as --> www.domain.com and value paste the loadbalancer id in this remove the http and seconds to 600
+
+
+
+---------------------------------------
+
+when you install ssl certificate it does not show not secure message in the tab
+
+
+Explanation for project
+***********************
+
+Developers place the code in GitHub and uses the build maven for java and nodejs for NPM and runs the tests by SonarQube it shows the errors,code quality, codesmells,bug and submit the report to developers
+
+After that we generate an artifact for java mvn package for nodejs we write a docker file and push it to the dockerhub in private repository
+
+After this it is deployed in Kubernetes by mentioning number of replicas and write a service file to access the application by writing the loadbalancer and mentioned ssl certificates for protection 
+
+And after we write HPA to maintain minimum and maximum number of replicas
+
+To store the application data we use PV and PVC for storage purpose

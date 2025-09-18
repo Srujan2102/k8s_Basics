@@ -1,0 +1,206 @@
+Ingress:
+
+- Definition: Ingress is a Kubernetes resource that allows you to manage incoming HTTP requests and route them to services within the cluster.
+- Purpose: Ingress provides a single entry point for incoming requests, allowing you to define rules for routing traffic to specific services based on the request's URL, host, or other criteria.
+- Key features:
+    - Path-based routing
+    - Host-based routing
+    - SSL/TLS termination
+    - Load balancing
+
+HTTP (Hypertext Transfer Protocol):
+
+- Definition: HTTP is a protocol used for transferring data over the internet.
+- Purpose: HTTP is used for communication between web browsers and web servers, allowing users to access and interact with web pages.
+- Key features:
+    - Request-response protocol
+    - Stateless protocol
+    - Supports various request methods (GET, POST, PUT, DELETE, etc.)
+    - Can be used with SSL/TLS encryption for secure communication
+
+HTTPS (Hypertext Transfer Protocol Secure):
+
+- Definition: HTTPS is an extension of HTTP that uses SSL/TLS encryption to secure communication between web browsers and web servers.
+- Purpose: HTTPS ensures that data exchanged between the client and server is encrypted, preventing eavesdropping and tampering.
+- Key features:
+    - Uses SSL/TLS encryption to secure communication
+    - Provides authentication and verification of the server's identity
+    - Ensures data integrity and confidentiality
+
+TCP (Transmission Control Protocol):
+
+- Definition: TCP is a transport-layer protocol that provides reliable, connection-oriented communication between devices.
+- Purpose: TCP ensures that data is delivered in the correct order, without duplication or loss.
+- Key features:
+    - Connection-oriented protocol
+    - Reliable protocol
+    - Error-checked protocol
+    - Supports flow control and congestion avoidance
+
+UDP (User Datagram Protocol):
+
+- Definition: UDP is a transport-layer protocol that provides best-effort, connectionless communication between devices.
+- Purpose: UDP is used for applications that require fast, efficient transmission and can tolerate some packet loss.
+- Key features:
+    - Connectionless protocol
+    - Best-effort delivery
+    - No reliability guarantees
+    - Fast transmission
+
+TLS (Transport Layer Security):
+
+- Definition: TLS is a cryptographic protocol used to provide secure communication between devices.
+- Purpose: TLS ensures that data exchanged between devices is encrypted, preventing eavesdropping and tampering.
+- Key features:
+    - Provides encryption, authentication, and verification of the server's identity
+    - Supports various encryption algorithms and protocols
+    - Widely used for secure communication on the internet
+
+In the context of Ingress, these protocols work together as follows:
+
+- Ingress: Ingress resources define rules for routing incoming HTTP requests to services within the cluster.
+- HTTP/HTTPS: Ingress can handle both HTTP and HTTPS traffic, using SSL/TLS encryption to secure communication.
+- TCP/UDP: Ingress can be configured to use TCP or UDP as the underlying transport protocol, depending on the specific requirements of the application.
+- TLS: Ingress can handle TLS termination, providing secure communication between the client and the Ingress controller.
+
+
+
+OSI Model
+*********
+
+🧱 The Seven Layers of OSI (Top to Bottom)
+
+Layer	Name	Function / Example Protocols
+
+7	Application	Provides user-oriented services. Protocols: HTTP, SMTP, FTP, DNS 
+
+6	Presentation	Translates/encrypts/compresses data for application. TLS, ASCII, MIME 
+
+5	Session		Manages sessions, controls dialogues & checkpoints (e.g. X.225, NetBIOS) 
+
+4	Transport	Ensures reliable end-to-end delivery, flow/error control. TCP, UDP, SCTP, QUIC 
+
+3	Network		Routing, logical addressing across networks. Protocols: IP, ICMP, IGMP, IPsec 
+
+2	Data Link	Node-to-node transfer of frames over a shared network. Sublayers: MAC & LLC. Protocols: 			Ethernet, PPP, ARP 
+
+1	Physical	Transmits raw bits over physical media: cables, wireless, hubs, repeaters, NICs 
+
+
+
+--------------------------------------------------------------------------------------------
+
+
+Ingress controller and Ingress resource
+***************************************
+
+1. Install the ingress controller(nginx)
+
+2. check whether ingress service is installed successfully or not
+
+3. check the endpoint of the ingresscontroller
+
+4. create multiple deployments of diff services for example Jenkins and nginx
+
+5. crate service file for both Jenkins and nginx
+
+6. copy the endpoint of ingress controller in step3 and update in DNS with subdomains
+
+7. create a ingress resource file and map the diff services in the ingress resource file 
+
+8. try to access the applications using the subdomain  names given in the ingress resource file
+
+9. If the subdomains are able to route the traffic to the expected services then the ingress resource file configuration is successful
+
+
+
+
+what are the diff networking concepts we have to study in k8s services --> clusterIP, nodeport, loadbalancer ingress
+
+1. clusteriP --> internal network --> for databases
+2. nodeport --> when we are running the application in a single pod 
+3. loadbalancer --> multiple pods we can go with loadbalancer
+4. Ingress --> more suitable for microservices 
+
+Node port and loadbalancer for dif protocols
+http + TLS = https -->mostly used for api web applications
+https ---> uses TCP
+	It is an application layer
+
+tcp --> mostly used for emails for high accuracy
+UDP --> for high performance eg: gaming
+
+
+http protocol used by user at application layer and ssl certificate installed at presentation layer and session is running and reached the particular webapplication using high accuracy provided by TCP
+
+
+
+Q1. why we need to install ingress controller --> if we want to write the ingress resource file we have to install ingress controller first
+
+Q2. what happens when you deploy a ingress controller in the k8s cluster --> it creates a network loadbalancer
+
+Q3. what happens when you create a loadbalancer in the k8s cluster 
+
+Q4. In aws loadbalancer url is created classic
+
+Types of loadbalancers
+**********************
+1.gateway
+2.application
+3.classic
+4.network
+
+Ingress controllers 
+********************
+1.
+2.
+
+
+Ingress resource file
+*********************
+
+Q1.before creating ingress resource what doed it require --> it requires the service name which are already created for the deployments
+
+deployment--> 3
+********
+jenkins
+nginx
+sonar
+
+service -->3
+************
+jenkins-service
+nginx- service
+sonar-service
+
+Before mapping the subdoamins to the particular service we have to update the DNS how we need to update --> Endpoint of ingresscontroller --> IP or URL(it creates a network loadbalancer)
+copy the endpoint
+open the DNS
+Example.com
+add record
+cName
+
+Jenkins with endpoint of ingresscontroller
+nginx with endpoint of ingresscontroller
+sonar with endpoint of ingresscontroller
+
+Ingress resource-->3
+********************
+jennins-service--> map this to Jenkins.example .com
+nginx- service--> map this to nginx.example .com
+sonar-service--> map this to sonar.example .com
+
+
+
+
+
+------------------------------------------------------------------
+
+
+
+Ingress controller steps
+************************
+
+1.kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.1/deploy/static/provider/aws/deploy.yaml
+
+kubectl get ns --> shows the name spaces

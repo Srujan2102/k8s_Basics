@@ -1,0 +1,21 @@
+automated management/self healing 
+**********************************
+
+When I deleted 3 pods 
+
+
+the replication controller in controlmanager of masternode interacted with apiserver and when it found all the pods are deleted it immediately created the desired number of pods mention while creating the deployment
+
+---------------------------------------
+
+
+If if delete the pods by replicaset 
+
+it deletes all the pods 
+
+------------------------------------------
+
+
+
+
+

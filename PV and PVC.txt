@@ -1,0 +1,152 @@
+PV(persistent volume) and PVC(persistent volume claim) 
+****************************************
+
+To maintain the data persistent just like the bind volumes
+
+persistent volume is created by the storage admin or cluster admin
+
+eg : for an app it needs 20gb we need to ask the cluster admin ,he is going to create the 20gb i.e, is called as persistant volume
+
+To use that 20gb we should use PVC 
+
+------------------------------------
+
+1. cat jenpvc.yaml
+
+2. kubectl create deployment Jenkins-1 --image Jenkins/Jenkins:jdk17 --replicas=1 --dry-run=client -o yaml>dep.yaml 
+
+3. kubectl apply -f dep.yaml 
+
+4. kubectl get deploy --> show the deployment 
+
+5. kubectl get pods -o wide 
+
+6. cd myapp 
+
+7. ls ---> shows jendep.yaml , svc.yaml 
+
+8. vi svc.yaml --> in this mention app: jenkins-1
+
+9. kubectl apply -f svc.yaml 
+
+10. kubectl get svc --> used to see the services
+
+	keep the port number of 30639 in the inbound rules
+
+11. copy the external-ip and paste in another tab --> it opens the Jenkins application
+
+12. kubectl get pods -o wide --> in this copy the name 
+
+13. kubectl exec -it paste it here -- /bin/bash
+
+14. cat /var/jenkins_home/secrects/InitialAdminPassword
+
+15. create a job1
+
+16. cd 
+
+17. exit 
+
+18. kubectl delete deploy jenkins-1 
+
+	 in the jekins application it gets error
+
+19. kubectl get svc 
+
+20. kubectl delete svc myapp-service 
+
+
+--------------------------------------------
+we are having 4 worker nodes
+we are adding storage manually
+
+
+connect to the server of particular node 
+
+---> sudo -i 
+
+---> cd /mnt 
+
+---> mkdir jenkins-data 
+
+---> ls --> shows jenkins-data which was created 
+
+---> cd /mnt 
+
+---> ls -l 
+
+---> chown -R ubuntu:ubuntu jenkins-data 
+
+---> go to master  node
+
+
+
+
+	vi jenpv.yaml--> change the path as above created directory
+ 
+21. kubectl apply -f jenpv.yaml
+	kubectl get pv  --> it should show status as available 
+
+22. kubectl apply -f jenpvc.yaml
+	cat jenpvc.yaml
+	kubectl get pvc --> status should be bound
+	kubectl get pv --> it shows status as bound(attaching)
+
+23. cat jenkinsdep.yaml
+	kubectl apply -f jenkinsdep.yaml
+
+24. cd myapp
+
+25. kubectl apply -f jenkinssvc.yaml
+	kubectl get svc
+	
+	copy the external ip and paste in another tab and give port number 30168
+		|
+		|
+26. kubectl get pods-o wide -> we can see thhe node here
+
+27. kubectl get deploy
+
+28. kubectl get pods --> here we have a pod
+
+29. kubectl exec -it paste the pod -- /bin/bash
+
+30. cat copy the Jenkins application url 
+	paste the password in Jenkins application
+	In Jenkins application create a job1
+
+31. exit  ----> in master node 
+
+32. kubectl delete deploy Jenkins 
+
+33. kubectl get pods --> it shows nothing
+
+34. kubectl delete svc myapp-service
+
+
+
+
+35. cd 
+
+36. vi jenkinsdep.yaml --> change the name app as jenkins-1
+
+	vi jen2dep.yaml  --> paste the changes in this to make a new deployment
+
+37. kubectl apply -f jen2dep.yaml
+
+38. kubectl get deploy 
+
+39. cd myapp
+
+40. cat svc.yaml
+
+41. sed -i 's/Jenkins/jenkins-1/g' svc.yaml
+
+42. kubectl apply -f svc.yaml
+
+43. kubectl get svc
+	copy the external ip and mention the port number in inbound rules and paste in a tab , if it wont work mention 80 beside the endpoint like :80
+
+ 	it wont ask for the registration i will ask the username and password
+
+44. kubectl delete svc myapp-service

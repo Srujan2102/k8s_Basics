@@ -1,0 +1,60 @@
+DevOps life cycle
+*****************
+
+plan 
+
+code -->GitHub
+
+build --> maven and npm
+
+test -- SonarQube 
+
+release --> Jenkins
+
+deploy --> server(virtualization)  and docker(containeraization)  and Kubernetes(orchestration)
+
+operate --> Terraform (IAC)
+
+monitor --> promotheus and Grafana
+
+
+
+------------------------------------------------------------------------
+
+
+
+1. Diff of docker swarm and Kubernetes 
+
+	* In docker swarm installation procedure is easy --> we can deploy small scale applications, it also have auto healing
+	* In k8s it installation procedure is complex ---> we can deploy small medium large scale applications , more suitable for microservices
+
+scaling --> refers to increasing resources
+
+
+In docker the application runs inside the container ---> 
+Ind k8s the application runs inside the pod   ---> kubectl   it will pull the image form the docker hub and
+
+How Docker is linked with Kubernetes 
+
+what is Kubernetes ?
+
+It is a orchestration
+	1. autoscaling (for high availabilitY)--> eg: our app is running in the pod in k8s cluster. single pod can not handle all the incoming traffic(no.of users or load)
+
+we need few more pods in which the same app is running--> by increasing the resources like pods  
+manual scaling (replicasets) or automated scaling (horizontal pod and autoscaler and vertical pod autoscaler)
+
+	2. loadbalancing --> load is nothing but the users ,it is handled by the replicaset
+	eg: if you are having 4 pods (same app running) 
+
+	3. autohealing ---> used in controllers in control manager of masternode of Kubernetes cluster
+
+	4. automated deployment---> 
+	using Jenkins 
+	ARGOCD --> automated deployment inn k8s
+	GitOPs with ARGoCD 
+
+	ARGCOCD --> install in k8s cluster 
+	implement the automated deployments
+
+

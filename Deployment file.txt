@@ -1,0 +1,105 @@
+Deployment file
+***************
+
+* Deployment is used for upgrade and downgrade the application version using the tags
+
+* Deployment strategies as follows
+
+1. Rolling update
+2. Recreate
+3. Blue/green deployment
+4. Canary deployment
+
+Deployment file ---> dryrun command used to write sample deployment
+***************
+
+
+Service definition file ---> To bring the traffic 
+   |
+Deployment
+   |
+Replicaset
+   |
+  Pod
+
+-------------------------------------------
+
+Deployment definition file 
+**************************
+
+apiversion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-deployment
+  labels:
+	app: myapp
+	type: front-end
+ 
+spec:
+  template:
+    metadata:
+      name: myapp-pod
+      labels:
+	 app: myapp
+	 type: front-end
+     spec:
+	containers:
+	 - name: nginx-container
+	   image: nginx
+replicas: 3
+selector:
+   matchLabels:
+	type: font-end
+
+
+
+Elastic container registry --> ECR
+-----------------------------------------
+
+Deployment definition file commands
+***********************************
+
+$ kubectl create deployment jenkins-3 --image jenkins/jenkins:jdk17 --replicas=3 --dry-run=client -o yaml>dep.yaml -----> creates the deployment file of replicas by definition file 
+
+$ kubectl create deployment jenkins-3 --image jenkins/jenkins:jdk17 --replicas=3 ---using command we use this
+
+$ kubectl get deployments ---> used to find how many deployments exist
+
+$ kubelet get deploy---->used to find how many deployments exist
+
+$ kubectl create -f deployment-defination-1.yaml ----> used to create the file  
+
+
+*****************************************
+what is the image used to create the pods in the new deployment?
+	It can perform in 3 ways 
+
+1. kubectl describe deployment deploymentname 
+ 
+kubectl get deployments
+
+2. kubectl describe rs replicaset-name
+
+kubectl get rs 
+
+3. kubectl describe pod podname 
+
+kubectl get pods
+
+
+Ans: kubectl describe deployment front-end-deployment 
+
+we have the image name as busybox88 for this question
+*****************************************
+
+
+
+
+
+
+
+
+
+
+
+
